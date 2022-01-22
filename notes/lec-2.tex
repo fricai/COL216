@@ -1,0 +1,306 @@
+\documentclass{scrartcl}
+
+\usepackage{amssymb, amsthm, amsmath}
+
+\title{COL216 Lecture 2}
+\author{Rishabh Dhiman}
+\date{10 January 2022}
+
+\usepackage{listings}
+
+\begin{document}
+\maketitle
+
+\section{Control Flow}
+pc is a program counter
+
+\begin{lstlisting}
+func:
+	mov pc, lr
+\end{lstlisting}
+\begin{lstlisting}
+void func() {
+	return;
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+X: func();
+
+Y: func();
+\end{lstlisting}
+
+\begin{lstlisting}
+bl func
+
+bl func
+\end{lstlisting}
+
+Special registers
+\begin{enumerate}
+	\item r15 -- pc -- program counter
+	\item r14 -- lr -- link register
+	\item r13 -- sp -- stack pointer
+\end{enumerate}
+
+How to have nested or recursive calls?
+
+\subsection{Passing Parameters}
+\begin{enumerate}
+	\item via registers
+		\begin{lstlisting}
+caller:
+	move parameters into registers
+	bl callee
+	take result from register
+		\end{lstlisting}
+		\begin{lstlisting}
+callee:
+	access parameters in registers
+
+	mov pc, lr
+		\end{lstlisting}
+	\item via stack
+		\begin{lstlisting}
+caller:
+	move parameters into stack
+	bl callee
+	pop result from stack
+		\end{lstlisting}
+		\begin{lstlisting}
+callee:
+	access parameters in stack
+
+	mov pc, lr
+		\end{lstlisting}
+\end{enumerate}
+\subsubsection{Convention}
+\begin{itemize}
+	\item First 4 parameters in r0, r1, r2, r3.
+	\item Result in r0.
+	\item Beyond this, use stack.
+	\item Callee can destroy r0, r1, r2, r3, r12.
+	\item It should preserve other registers, except pc.
+	\item Caller should preserver r0, r1, r2, r3, r12.
+\end{itemize}
+
+So the ``fixed'' code is
+\begin{lstlisting}
+caller:
+	save registers
+	move parameters into registers
+	bl callee
+	take result from register
+	restore registers
+\end{lstlisting}
+\begin{lstlisting}
+callee:
+	save registers
+	access parameters in registers
+	restore registers
+	mov pc, lr
+\end{lstlisting}
+
+Example:
+\begin{lstlisting}
+	g = A[0];
+	for (i = 1; i < n; ++i)
+		g = gcd(g, a[i]);
+\end{lstlisting}
+
+Sum array program:
+\begin{lstlisting}
+.equ SWI_Exit 0x11
+.text
+mov r1, #0 // load first element here instead
+ldr r3, =AA // address location
+add r6, r3, #400
+L: ldr r5, [r3, #0]
+add r1, r1, r5 // want to replace this with r1 = gcd(r1, r5)
+add r3, r3, #4
+cmp r3, r6 @ r6 = q
+blt L
+swi SWI_Exit
+.data
+AA: .space 400
+.end
+\end{lstlisting}
+gcd:
+\begin{lstlisting}
+ldr r4, =AA // start address location
+add r6, r4, #400 // end location
+mov r0, [r4, #0]
+add r4, r4, #4
+L: ldr r1, [r4, #0]
+bl gcd
+add r4, r4, #4
+cmp r4, r6 @ r6 = q
+blt L
+\end{lstlisting}
+Note, we replace r0, r1, r2, r3 here with other things since they may not be preserved by gcd call.
+\begin{lstlisting}
+gcd: cmp r0, r1
+	beq ret
+	blt sub10
+sub01: sub r0, r0, r1
+	b gcd
+sub10: sub r1, r1, r0
+	b gcd
+ret: mov pc, lr
+\end{lstlisting}
+
+\section{DP (data processing) instructions}
+\begin{itemize}
+	\item Arithmetic -- 
+\end{itemize}
+Fill this in
+
+In an arithmetic operation, the second argument could be a constant too.
+\subsection{Arithmetic}
+\begin{itemize}
+	\item add
+	\item  sub
+	\item rsb -- reverse subtract
+	\item adc
+	\item sbc
+	\item rsc
+\end{itemize}
+c stands for with carry
+
+\subsection{Logical}
+\begin{itemize}
+	\item and -- bit by bit logical AND
+	\item orr -- bit by bit logical OR
+	\item eor -- bit by bit logical XOR
+	\item bic -- bit clear, op1 and not op2
+\end{itemize}
+
+\subsection{Move}
+\begin{itemize}
+	\item mov -- dest $\leftarrow$ src
+	\item mvn -- dest $\leftarrow$ not src
+\end{itemize}
+
+\subsection{Compare}
+\begin{itemize}
+	\item cmp -- op1 - op2
+	\item cmn -- op1 - (-op2)
+\end{itemize}
+
+\subsection{Test}
+Modifies status flags.
+\begin{itemize}
+	\item tst -- op1 and op2
+	\item teq -- op1 eor op2
+\end{itemize}
+
+\section{DT (Data Transfer) Instructions}
+\begin{itemize}
+	\item ldr / str -- load / store word
+	\item ldrb / strb -- load / store byte
+	\item ldrh / strh -- load / store half word
+	\item ldrsb / ldrsh -- load signed byte / half word
+	\item ldm / stm -- load / store multiple (any subset of registers can be specified)
+\end{itemize}
+
+\section{Comparison in ARM}
+Signed comparison
+\begin{itemize}
+	\item equal -- beq
+	\item not equal -- bne
+	\item greater or equal -- bgeq
+	\item less than -- blt
+	\item greater than -- bgt
+	\item less or equal -- ble
+\end{itemize}
+
+Unsigned comparison
+\begin{itemize}
+	\item equal -- beq
+	\item not equal -- bne
+	\item higher or same -- bhs
+	\item lower -- blo
+	\item higher -- bhi
+	\item lower or same -- bls
+\end{itemize}
+
+\section{Condition Codes and Flags}
+\begin{enumerate}
+	\setcounter{enumi}{0}
+	\item eq -- $Z = 1$
+	\item ne -- $Z = 0$
+	\item hs / cs (C set) $C = 1$ -- for unsigned values $(x - y)$ is implemented as $x + (2^n - y) = x + \tilde y$.
+	\item lo / cc (C clear) $C = 0$
+	\item mi (minus) $N = 1$
+	\item pl (plus) $N = 0$
+	\item vs (V set) $V = 1$
+	\item vc (V clear) $V = 0$
+	\item hi $C = 1$ and $Z = 0$
+	\item ls $C = 0$ or $Z = 1$
+	\item ge $N = V$
+	\item ge $N \neq V$
+	\item gt $N = V$ and $Z = 0$
+	\item le $N \neq V$ or $Z = 1$
+	\item al ignore all flags -- b = bal
+\end{enumerate}
+
+\section{Status Flags}
+\begin{itemize}
+	\item N -- Negative
+	\item Z -- Zero
+	\item C -- Carry
+	\item V -- Overflow
+\end{itemize}
+
+\section{Assembler Directives}
+.text
+.data
+.end
+
+\begin{itemize}
+\item .space -- reserve some space
+\item .word -- reserve + initialize space
+\item .byte
+\item .ascii
+\item .asciz
+\end{itemize}
+
+.equ -- equates a symbol to a value
+
+\section{I/O in Arm}
+SWI Instruction -- Instruction to invoke some service provided by system software.
+
+Use in ARMSim:
+\begin{itemize}
+	\item I/O from/to stdin/stdout
+	\item input/output from/to files
+	\item opening/closing of files
+	\item Halt execution
+\end{itemize}
+
+Example in ARMSim\# 1.91
+\begin{lstlisting}
+ldr r0, =message
+swi 0x02 @ write on stdout
+
+message: .asciz "Welcome\n"
+\end{lstlisting}
+
+I/O Example in ARMSim\# 2.01
+\begin{lstlisting}
+ldr r1, =param
+mov r4, #1 @ file #1 is stdout
+str r4, [r1]
+ldr r4, =message
+str r4, [r1, #4]
+mov r4, #8 @ number of bytes
+str r4, [r1, #8]
+mov r0, #5 @ code for write
+swi 0x123456
+
+param: .word 0, 0, 0
+message: .ascii "Welcome\n"
+\end{lstlisting}
+
+\section{ISR vs User Mode}
+\end{document}

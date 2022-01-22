@@ -1,0 +1,138 @@
+\documentclass{scrartcl}
+
+\usepackage{amssymb, amsthm, amsmath}
+
+\usepackage{minted}
+
+\title{COL216 Lecture 3}
+\author{Rishabh Dhiman}
+\date{13 January 2022}
+
+\usepackage{listings}
+
+\begin{document}
+\maketitle
+
+\section{Format for DP Instructions}
+
+\subsection{Shift Operations on Registers}
+Shift type:
+\begin{itemize}
+	\item LSL -- logical shift left
+	\item LSR -- logical shift right
+	\item ASR -- arithmetic shift right
+	\item ROR -- rotate right
+\end{itemize}
+Shift amount can be,
+\begin{itemize}
+	\item 5 bit unsigned constant for shift amount,
+	\item 4 bit register.
+\end{itemize}
+Rm, LSL \#4 -- const type 0 Rm
+Rm, LSL Rs -- Rs 0 type 1 Rm
+
+\subsection{Rotate operation on Constant}
+\begin{tabular}{cc}
+	\hline
+	rot & lmm\\
+	\hline
+	4 & 8
+\end{tabular}
+
+lmm is an 8 bit constant (0 to 255) which is zero extended to 32 bits, and rotated right by 2 $\times$ rot bits.
+
+\begin{itemize}
+	\item operand2 = \#400 $\to$ lmm = 100, rot = 15, corresponds to right shift by $32 - 2 \times 15$,
+	\item operand2 = \#800 $\to$ lmm = 50, rot = 14, correspnods to right shift by $32 - 2 \times 14$.
+\end{itemize}
+
+\subsection{Multiply}
+Format for mul r1, r2, r3
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+	\hline
+	& F & l & opc & & Rn & Rd & Rs & 1001 & Rm\\
+	\hline
+	4 & 2 & 1 & 4 & 1 & 4 & 4 & 4 & 4 & 4\\
+	\hline
+\end{tabular}
+
+\subsection{Multiply Accumulate}
+Format for mla r1, r2, r3, r4; -- r1 $\leftarrow$ r2 $\times$ r3 + r4.
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+	\hline
+	& 00 & 0 & opc & & Rn & Rd & Rs & 1001 & Rm\\
+	\hline
+\end{tabular}
+
+\subsection{Multiplying by a constant}
+mul r1, r2, \#10 $\to$ mov r3, \#10; mul r1, r2, r3;
+
+Multiplying by a power of 2 is equivalent to a logical left shift.
+
+\section{Format for DT Instructions}
+Rd $\leftarrow$ Memory [Rn + offset]
+
+\begin{tabular}{|c|c|c|c|c|c|c|}
+	\hline
+	& F & opc & & Rn & Rd & offset\\
+	\hline
+	4 & 2 & 6 & 1 & 4 & 4 & 12\\
+	\hline
+\end{tabular}
+
+F = 01.
+
+The 12-bit offset can be
+\begin{itemize}
+	\item 12 bit unsigned constant,
+	\item 4 bit register number, 8 shift specification
+\end{itemize}
+\subsection{Load}
+ldr r4, [r5, \#32], opc = 25
+
+\subsection{Indexing an Array}
+\begin{minted}{arm}
+mul r4, r5, #4
+add r2, r2, r4
+ldr r6, [r2, #0]
+\end{minted}
+\begin{minted}{arm}
+add r2, r2, r5, LSL #4
+ldr r6, [r2]
+\end{minted}
+Further reduction (fill it in):
+\begin{minted}{arm}
+ldr r6, [r2, r5, LSL #4]
+\end{minted}
+
+\subsection{Opcode field in DT Instructions}
+6 opcode bits specify,
+\begin{itemize}
+	\item I (immediate): constant or register with shift
+	\item P (pre/post indexing): pre or post indexing
+	\item U (up/down): whether to add or subtract offset
+	\item B (byte): byte or word transfer
+	\item W (write back): whether to write back address into base register (Rn) or not.
+	\item L (load/store): load from memory or store from memory
+\end{itemize}
+Post-indexing only makes sense with write-back.
+
+Load half-word is a completely unrelated operation.
+
+\begin{itemize}
+	\item \mintinline{arm}{ldr r4, [r5, -r6]}
+	\item \mintinline{arm}{str r4, [r5, r6, LSL #2]}
+	\item \mintinline{arm}{ldrb r4, [r5, #32]!}
+	\item \mintinline{arm}{strb r4, [r5, #-32]}
+	\item \mintinline{arm}{ldr r4, [r5], r6}
+	\item \mintinline{arm}{ldr r4, [r5], r6, LSL #2}
+\end{itemize}
+
+\subsubsection{Using auto-incrememnt/decrement}
+When pointer is at first location vs when it points to the (possibly empty) element before address location.
+\begin{itemize}
+	\item get/pop: post-increment, pre-increment
+	\item put/push: pre-decrement, post-decrement
+\end{itemize}
+\end{document}
