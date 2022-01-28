@@ -88,10 +88,7 @@ test:
 	stmfd sp!, {r9}
 	ldr r0, =pointer_buffer
 	mov r1, r4
-
-	mov r2, #4
-	mul r2, r2, r4
-	add r2, r2, r0 @ r2 = =pointer_buffer + 4 * n
+	add r2, r0, r4, LSL #2 @ r2 = =pointer_buffer + 4 * n = r0 + (r4 << 2)
 	mov r3, r6
 
 	bl merge

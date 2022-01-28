@@ -65,13 +65,8 @@ merge:
 	mov r5, r2 @ r5 = b
 	ldr r6, [sp, #28] @ r6 = c
 
-	mov r7, #4
-	mul r7, r1, r7
-	add r7, r0, r7 @ r7 = a + 4 * n
-
-	mov r8, #4
-	mul r8, r3, r8
-	add r8, r2, r8 @ r8 = b + 4 * m
+	add r7, r0, r1, LSL #2
+	add r8, r2, r3, LSL #2
 
 	ldr r9, [sp, #32] @ r9 = mode
 
