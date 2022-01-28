@@ -116,7 +116,7 @@ get_strings:
 	.asciz "Input the strings in a sorted order, each string on a new line:\n"
 
 get_case:
-	.asciz "Do a case-sensitive comparison (1 for case-sensitive comparison, 0 for case-insensitive): "
+	.asciz "Do a case-insensitive comparison? (1 for case-insensitive comparison, 0 for case-sensitive): "
 
 get_dup:
 	.asciz "Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): "
