@@ -3,13 +3,13 @@
 	.global input_string
 	.global output_string
 	.global output_new_line
-
+	.global input_number
 	.text
-input_string:
 					@ r0 has address where we will store input
 					@ the function will read till \n
 					@ and then end the string with a \0
 					@ returns the position of the next empty position in the memory
+input_string:
 	mov r2, r0
 	ldr r1, =ReadParams
 input_rec:
@@ -29,7 +29,6 @@ terminate:
 	add r2, r2, #1
 	mov r0, r2
 	mov pc, lr
-
 output_string:
 					@ r0 has the address of the output
 					@ prints till it encounters a \0
@@ -45,9 +44,8 @@ output_string_of_length:
 					@ r0 has the start address
 					@ r3 has the end address
 	sub r2, r3, r0
-	ldr r1, =WriteParams
-	str r0, [r1, #4]
-	str r2, [r1, #8] 		@ r2 is the length
+	ldr r1, =WriteParams		
+	stmfa r1, {r0, r2}		@ r2 is the length
 	mov r0, #0x05
 	swi 0x123456
 	add r3, r3, #1
@@ -57,6 +55,36 @@ output_new_line:
 	mov r0, #0x05
 	ldr r1, =WriteNewLine
 	swi 0x123456
+	mov pc, lr
+input_number:
+					@ maximum size is 32 bits
+					@ number will be returned at r0
+	ldr r0, =buffer
+	stmfd sp!, {r4, r5, r6, lr}
+	bl input_string
+					@ convert string to number at r0
+	ldr r1, =buffer
+	ldrb r6, [r1]
+	cmp r6, #45 			@ check for '-' sign
+	moveq r6, #1
+	movne r6, #0
+	cmpne r6, #43 			@ check for '+' sign
+	addeq r1, r1, #1 		@ if '-' or '+' then increase start position
+	mov r2, r0
+	sub r2, r2, #1
+	mov r0, #0
+	mov r5, #10
+string_to_int:
+	ldrb r3, [r1]
+	sub r3, r3, #48
+	mla r4, r5, r0, r3
+	mov r0, r4
+	add r1, r1, #1
+	cmp r1, r2
+	bne string_to_int
+	cmp r6, #1			@ if the number is negative
+	rsbeq r0, r0, #0
+	ldmfd sp!, {r4, r5, r6, lr}
 	mov pc, lr
 
 	.data
