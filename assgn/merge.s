@@ -64,8 +64,15 @@ merge:
 	mov r4, r0 @ r4 = a
 	mov r5, r2 @ r5 = b
 	ldr r6, [sp, #28] @ r6 = c
-	add r7, r0, r1 @ r7 = a + n
-	add r8, r2, r3 @ r8 = b + m
+
+	mov r7, #4
+	mul r7, r1, r7
+	add r7, r0, r7 @ r7 = a + 4 * n
+
+	mov r8, #4
+	mul r8, r3, r8
+	add r8, r2, r8 @ r8 = b + 4 * m
+
 	ldr r9, [sp, #32] @ r9 = mode
 
 loop_both:
@@ -97,14 +104,14 @@ loop_both:
 
 move_a:
 	@ c[k++] = a[i++]
-	ldrb r12, [r4], #1 @ r12 = a[i++]
-	strb r12, [r6], #1 @ c[k++] = r12
+	ldr r12, [r4], #4 @ r12 = a[i++]
+	str r12, [r6], #4 @ c[k++] = r12
 	mov pc, lr
 
 move_b:
 	@ c[k++] = b[j++]
-	ldrb r12, [r5], #1 @ r12 = b[j++]
-	strb r12, [r6], #1 @ c[k++] = r12
+	ldr r12, [r5], #4 @ r12 = b[j++]
+	str r12, [r6], #4 @ c[k++] = r12
 	mov pc, lr
 	
 loop_a:
@@ -122,9 +129,11 @@ loop_b:
 	b move_b
 
 terminate:
-	ldmfd sp!, {r4-r9, lr}
 	ldr r12, [sp, #28] @ r12 = c
 	sub r0, r6, r12 @ r0 = (c + k) - c
+	mov r12, #2
+	lsr r0, r0, r12 @ divide by 4
+	ldmfd sp!, {r4-r9, lr}
 	mov pc, lr
 
 	.end
