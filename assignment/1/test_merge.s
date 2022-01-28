@@ -1,7 +1,5 @@
-	.extern input_string
-	.extern output_string
-	.extern output_new_line
-	.extern atoi
+	.extern input_string, input_number
+	.extern output_string, output_new_line
 	.extern merge
 
 	.text
@@ -9,28 +7,19 @@ main:
 	@ get the number of strings
 	ldr r0, =get_case
 	bl output_string
-	ldr r0, =scratch
-	bl input_string
-	ldr r0, =scratch
-	bl atoi
+	bl input_number
 	mov r4, r0
 
 	ldr r0, =get_dup
 	bl output_string
-	ldr r0, =scratch
-	bl input_string
-	ldr r0, =scratch
-	bl atoi
+	bl input_number
 
 	orr r4, r4, r0, LSL #1 @ we use mode = (dup << 1) | case
 	stmfd sp!, {r4} @ place it onto stack rn
 
 	ldr r0, =get_count1
 	bl output_string
-	ldr r0, =scratch
-	bl input_string
-	ldr r0, =scratch
-	bl atoi
+	bl input_number
 	mov r4, r0 @ store the number of strings in list 1
 
 	ldr r0, =get_strings
@@ -54,10 +43,7 @@ input_list2:
 
 	ldr r0, =get_count2
 	bl output_string
-	ldr r0, =scratch
-	bl input_string
-	ldr r0, =scratch
-	bl atoi
+	bl input_number
 	mov r6, r0 @ store the number of strings in list 2
 
 	ldr r0, =get_strings
@@ -94,6 +80,9 @@ test:
 	bl merge
 
 	mov r4, r0 @ r0 stores length of list
+	ldr r0, =print_list
+	bl output_string
+	bl output_new_line
 	mov r8, #0
 print_loop:
 	cmp r8, r4
@@ -109,10 +98,6 @@ terminate:
 	swi 0x123456
 
 	.data
-scratch:
-	.space 16
-	@ some scratch space
-
 string_buffer:
 	.space 4096
 	@ buffer to store strings input by user
@@ -134,6 +119,9 @@ get_case:
 	.asciz "Do a case-sensitive comparison (1 for case-sensitive comparison, 0 for case-insensitive): "
 
 get_dup:
-	.ascii "Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): "
+	.asciz "Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): "
+
+print_list:
+	.asciz "The merged list is: "
 
 	.end
