@@ -7,6 +7,24 @@
 	.text
 main:
 	@ get the number of strings
+	ldr r0, =get_case
+	bl output_string
+	ldr r0, =scratch
+	bl input_string
+	ldr r0, =scratch
+	bl atoi
+	mov r4, r0
+
+	ldr r0, =get_dup
+	bl output_string
+	ldr r0, =scratch
+	bl input_string
+	ldr r0, =scratch
+	bl atoi
+
+	orr r4, r4, r0, LSL #1 @ we use mode = (dup << 1) | case
+	stmfd sp!, {r4} @ place it onto stack rn
+
 	ldr r0, =get_count1
 	bl output_string
 	ldr r0, =scratch
@@ -66,8 +84,7 @@ test:
 	@ push =pointer_buffer + 4 * (m + n) onto stack
 	@    the last value should already be present in r9 I think
 
-	mov r0, #0
-	stmfd sp!, {r0} @ we use mode = 0 for now
+	@ mode was pushed onto the stack at the start
 	stmfd sp!, {r9}
 	ldr r0, =pointer_buffer
 	mov r1, r4
@@ -80,12 +97,11 @@ test:
 	bl merge
 
 	mov r4, r0 @ r0 stores length of list
-	mov r0, r9 @ r9 stores list pointer
 	mov r8, #0
 print_loop:
 	cmp r8, r4
 	beq terminate
-	ldr r0, [r9], #4
+	ldr r0, [r9], #4 @ r9 stores the lit of strings
 	bl output_string
 	bl output_new_line
 	add r8, r8, #1
@@ -96,7 +112,6 @@ terminate:
 	swi 0x123456
 
 	.data
-
 scratch:
 	.space 16
 	@ some scratch space
@@ -116,6 +131,12 @@ get_count2:
 	.asciz "Number of strings in the second list: "
 
 get_strings:
-	.asciz "Input the strings, each string on a new line:\n"
+	.asciz "Input the strings in a sorted order, each string on a new line:\n"
+
+get_case:
+	.asciz "Do a case-sensitive comparison (1 for case-sensitive comparison, 0 for case-insensitive): "
+
+get_dup:
+	.ascii "Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): "
 
 	.end
