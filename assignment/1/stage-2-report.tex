@@ -1,0 +1,158 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+\usepackage{minted}
+
+\title{COL226 Assignment 1\\{\Large Stage 2}}
+\date{28 January 2022}
+\author{Rishabh Dhiman\\ \texttt{2020CS10837}}
+
+\usepackage{amsthm, amsmath, amssymb}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\renewcommand{\tt}{\mintinline{text}}
+\newcommand{\fun}{\mintinline{arm}}
+\newcommand{\reg}{\mintinline{text}}
+
+\begin{document}
+
+\maketitle
+
+\section{Objective}
+Construct a function to merge two sorted list of strings.
+
+\section{Technical Details}
+\begin{itemize}
+	\item ARMSim version 2.0.1, Angel SWI Instructions
+	\item Credits for \tt{io.s} to Ramanuj Goel, 2020CS510437 -- \href{https://github.com/taitaisama/Arm_io}{Github Link}
+	\item The input list of strings is sorted.
+	\item If duplicates are being removed while merging, no two strings in the same list should be equal. The string to be deleted is arbitrarily chosen.
+	\item Refer to stage 1 report for the definition of a case-insensitive comparison.
+\end{itemize}
+
+\section{Documentation}
+All the files from Stage 1 of the assignment are used, along with this \tt{io.s} has been updated, two new files, \tt{merge.s} and \tt{test_merge.s} have been added.
+
+\subsection*{\tt{merge.s}}
+This files defines a merge function with the C signature,
+\begin{minted}{c}
+int merge(char** a, int n, char** b, int m, int mode, char** c);
+\end{minted}
+It merges the sorted list of strings \tt{a} and \tt{b}, and stores them in \tt{c}.
+\begin{itemize}
+	\item \tt{a} and \tt{b} are array of sorted strings.
+	\item \tt{n} and \tt{m} are the length of \tt{a} and \tt{b}, respectively.
+	\item \tt{mode} is an integer parameters to control the way in which the lists are merged
+		\begin{itemize}
+			\item if the lowest bit of \tt{mode} is set, then case-insensitive comparison takes place,
+			\item if the second bit of \tt{mode} is set, then equal strings are deleted while merging.
+		\end{itemize}
+	\item \tt{c} is a word-aliged memory location where the merged list is stored.
+	\item The function finally returns a single integer representing the length of the merged list.
+\end{itemize}
+The \fun{merge} function doesn't change any value in \tt{a} or \tt{b} and simply copies the string pointers rather than copying the string.
+
+\subsection*{\tt{test_merge.s}}
+This file is used to test the \fun{merge} function defined in \tt{merge.s}. The file interacts with the user via console,
+\begin{itemize}
+	\item It first asks the user, if the comparison done is case-insensitive or not.
+	\item It then asks the user, if duplicate strings are to be removed or not.
+	\item It then asks the length of the first sorted list, and then inputs the ASCII strings, each string in a new line.
+	\item It then asks the length of the second sorted list, and then inputs the ASCII strings, each string in a new line.
+\end{itemize}
+It finally outputs the merged list of strings to the console, each string on a new line.
+
+\section{Tests and Results}
+To reproduce these, load \tt{io.s}, \tt{compare.s}, \tt{merge.s} and \tt{test_merge.s} in ARMSim. Run it and follow the instructions printed on the console.
+\begin{enumerate}
+	\item
+\begin{minted}[breaklines]{text}
+Do a case-insensitive comparison? (1 for case-insensitive comparison, 0 for case-sensitive): 0
+Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): 0
+Number of strings in the first list: 3
+Input the strings in a sorted order, each string on a new line:
+one
+three
+two
+Number of strings in the second list: 2
+Input the strings in a sorted order, each string on a new line:
+four
+six
+The merged list is: 
+four
+one
+six
+three
+two
+\end{minted}
+	\item
+\begin{minted}[breaklines]{text}
+Do a case-insensitive comparison? (1 for case-insensitive comparison, 0 for case-sensitive): 1
+Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): 0
+Number of strings in the first list: 3
+Input the strings in a sorted order, each string on a new line:
+One
+three
+two
+Number of strings in the second list: 3
+Input the strings in a sorted order, each string on a new line:
+Four
+one
+two
+The merged list is: 
+Four
+One
+one
+three
+two
+two
+\end{minted}
+	\item
+\begin{minted}[breaklines]{text}
+Do a case-insensitive comparison? (1 for case-insensitive comparison, 0 for case-sensitive): 0
+Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): 1
+Number of strings in the first list: 3
+Input the strings in a sorted order, each string on a new line:
+one
+three
+two
+Number of strings in the second list: 4
+Input the strings in a sorted order, each string on a new line:
+Two
+one
+six
+three
+The merged list is: 
+Two
+one
+six
+three
+two
+\end{minted}
+	\item
+\begin{minted}[breaklines]{text}
+Do a case-insensitive comparison? (1 for case-insensitive comparison, 0 for case-sensitive): 1
+Remove duplicates from list, in case dulicates are to be removed no equal elements should be present in the same list (1 to remove duplicates, 0 to not remove): 1
+Number of strings in the first list: 3
+Input the strings in a sorted order, each string on a new line:
+one
+three
+two
+Number of strings in the second list: 4
+Input the strings in a sorted order, each string on a new line:
+One
+six
+Three
+two
+The merged list is: 
+one
+six
+three
+two
+\end{minted}
+\end{enumerate}
+\end{document}
