@@ -1,0 +1,194 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+\usepackage{minted}
+
+\title{COL226 Assignment 1\\{\Large Stage 3}}
+\date{3 February 2022}
+\author{Rishabh Dhiman\\ \texttt{2020CS10837}}
+
+\usepackage{amsthm, amsmath, amssymb}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\renewcommand{\tt}{\mintinline{text}}
+\newcommand{\fun}{\mintinline{cpp}}
+\newcommand{\reg}{\mintinline{text}}
+
+\begin{document}
+
+\maketitle
+
+\section{Objective}
+Construct a function to sort a list of strings using merge sort.
+
+\section{Technical Details}
+\begin{itemize}
+	\item ARMSim version 2.0.1, Angel SWI Instructions
+	\item Credits for \tt{io.s} to Ramanuj Goel, 2020CS510437 -- \href{https://github.com/taitaisama/Arm_io}{Github Link}
+	\item Refer to stage 1 report for the definition of a case-insensitive comparison.
+	\item In case duplicates are being removed, the string to be deleted is arbitrarily chosen.
+	\item It's assumed that the total space taken by the input strings won't exceed 4096 bytes and that there will be atmost 1024 strings.
+\end{itemize}
+
+\section{Documentation}
+All the files defining functions from Stage 1 and 2 of the assignment are used. Two new files, \tt{sort.s} and \tt{test_sort.s} have been added.
+
+\subsection*{\tt{sort.s}}
+This files defines two functions \fun{sort} and \fun{merge_sort} function with the C++ signature,
+\begin{minted}{cpp}
+int merge_sort(char** a, int len, int mode, char** res);
+pair<char**, int> sort(char** a, int len, int mode);
+\end{minted}
+
+\subsubsection*{\mintinline{c}{merge_sort}}
+It sorts the list of strings \tt{a}, and stores it in \tt{res}.
+\begin{itemize}
+	\item \tt{a} is an array of strings.
+	\item \tt{len} is the length of \tt{a}.
+	\item \tt{mode} is an integer parameters to control the way in which the lists are merged
+		\begin{itemize}
+			\item if the lowest bit of \tt{mode} is set, then case-insensitive comparison takes place,
+			\item if the second bit of \tt{mode} is set, then equal strings are deleted while merging.
+		\end{itemize}
+	\item \tt{res} is a word-aliged memory location where the merged is stored.
+	\item The function finally returns a single integer representing the length of the sorted list.
+\end{itemize}
+
+In ARM, the arguments \tt{a}, \tt{len}, \tt{mode}, \tt{res} correspond to the registers \reg{r0}, \reg{r1}, \reg{r2}, \reg{r3}, respectively. The output, length, is stored in \reg{r0}.
+
+\subsubsection*{\mintinline{c}{sort}}
+This functions is very similar to the previous \fun{merge_sort} function, however, rather than taking in the output array as \tt{res} an argument it returns a pointer to the sorted list along with its length.
+
+In ARM, the arguments \tt{a}, \tt{len}, \tt{mode} correspond to the registers \reg{r0}, \reg{r1}, \reg{r2}, respectively. The output, sorted list and its length, correspond to \reg{r0} and \reg{r1}, respectively.
+
+\subsection*{\tt{test_sort.s}}
+This file is used to test the \fun{sort} function defined in \tt{sort.s}. The file interacts with the user via console,
+\begin{itemize}
+	\item It first asks the user, if the comparison done is case-insensitive or not.
+	\item It then asks the user, if duplicate strings are to be removed or not.
+	\item It then asks the user the for the number of strings, and then inputs the ASCII strings, each string in a new line.
+\end{itemize}
+It finally outputs the merged list of strings to the console, each string on a new line.
+
+\section{Tests and Results}
+To reproduce these, load \tt{io.s}, \tt{compare.s}, \tt{merge.s}, \tt{sort.s} and \tt{test_sort.s} in ARMSim. Run it and follow the instructions printed on the console.
+\begin{enumerate}
+	\item
+\begin{minted}[breaklines]{text}
+Case-insensitive compare (1 for case-insensitive comparison, 0 for case-sensitive): 0
+Remove duplicates from list (1 to remove duplicates, 0 to not remove): 0
+Number of strings in the list: 10
+Input the strings, each string on a new line:
+one
+one
+One
+two
+Three
+four
+five
+six
+seven
+Eight
+
+The sorted list is: 
+Eight
+One
+Three
+five
+four
+one
+one
+seven
+six
+two
+\end{minted}
+	\item
+\begin{minted}[breaklines]{text}
+Case-insensitive compare (1 for case-insensitive comparison, 0 for case-sensitive): 0
+Remove duplicates from list (1 to remove duplicates, 0 to not remove): 1
+Number of strings in the list: 10
+Input the strings, each string on a new line:
+one
+two
+One
+three
+four
+one
+five
+six
+seven
+Eight
+
+The sorted list is: 
+Eight
+One
+five
+four
+one
+seven
+six
+three
+two
+\end{minted}
+	\item
+\begin{minted}[breaklines]{text}
+Case-insensitive compare (1 for case-insensitive comparison, 0 for case-sensitive): 1
+Remove duplicates from list (1 to remove duplicates, 0 to not remove): 0
+Number of strings in the list: 10
+Input the strings, each string on a new line:
+one
+two
+One
+three
+four
+one
+five
+six
+seven
+Eight
+
+The sorted list is: 
+Eight
+five
+four
+one
+One
+one
+seven
+six
+three
+two
+\end{minted}
+	\item
+\begin{minted}[breaklines]{text}
+Case-insensitive compare (1 for case-insensitive comparison, 0 for case-sensitive): 1
+Remove duplicates from list (1 to remove duplicates, 0 to not remove): 1
+Number of strings in the list: 10
+Input the strings, each string on a new line:
+one
+two
+One
+three
+four
+one
+Five
+six
+seven
+eight
+
+The sorted list is: 
+eight
+Five
+four
+one
+seven
+six
+three
+two
+\end{minted}
+\end{enumerate}
+\end{document}
