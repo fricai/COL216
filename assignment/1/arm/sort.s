@@ -45,6 +45,10 @@ merge_sort:
 	@ }
 
 	cmp r1, #1
+	@ if there's 0 or fewer elements in the list, return 0 and don't do anything
+	movlt r0, #0 
+	movlt pc, lr
+
 	beq single
 
 	stmfd sp!, {r4-r9, lr}
