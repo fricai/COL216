@@ -126,9 +126,10 @@ loop_b:
 terminate:
 	ldr r12, [sp, #28] @ r12 = c
 	sub r0, r6, r12 @ r0 = (c + k) - c
-	mov r12, #2
-	lsr r0, r0, r12 @ divide by 4
-	ldmfd sp!, {r4-r9, lr}
-	mov pc, lr
+	lsr r0, r0, #2 @ divide by 4
+
+	@ ldmfd sp!, {r4-r9, lr}
+	@ mov pc, lr
+	ldmfd sp!, {r4-r9, pc}
 
 	.end
