@@ -33,4 +33,5 @@ begin
 		       op2 when mov, -- 1101
 		       op1 and (not op2) when bic, -- 1110
 		       not op2 when mvn; -- 1111
+	-- need to define how carry_out is affected
 end beh;
