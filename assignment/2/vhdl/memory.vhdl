@@ -26,8 +26,9 @@ end program_memory;
 
 architecture beh of program_memory is
 	type mem_t is array(0 to 63) of word;
-	signal mem: mem_t;
+	signal mem: mem_t := (others => (others => '0'));
 begin
+	mem(1) <= x"0000FFFF";
 	data_out <= mem(to_integer(unsigned(read_addr)));
 end beh;
 
