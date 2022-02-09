@@ -22,9 +22,9 @@ begin
 		       word(unsigned(op1) + unsigned(not op2) + unsigned(one)) when sub, -- 0010
 		       word(unsigned(not op1) + unsigned(op2) + unsigned(one)) when rsb, -- 0011
 		       word(unsigned(op1) + unsigned(op2)) when add, -- 0100
-		       word(unsigned(op1) + unsigned(op2) + unsigned'('0'&carry_in)) when adc, -- 0101
-		       word(unsigned(op1) + unsigned(not op2) + unsigned'('0'&carry_in)) when sbc, -- 0110
-		       word(unsigned(not op1) + unsigned(op2) + unsigned'('0'&carry_in)) when rsc, -- 0111
+		       word(unsigned(op1) + unsigned(op2) + unsigned'("" & carry_in)) when adc, -- 0101
+		       word(unsigned(op1) + unsigned(not op2) + unsigned'("" & carry_in)) when sbc, -- 0110
+		       word(unsigned(not op1) + unsigned(op2) + unsigned'("" & carry_in)) when rsc, -- 0111
 		       op1 and op2 when tst, -- 1000
 		       op1 xor op2 when teq, -- 1001
 		       word(unsigned(op1) + unsigned(not op2) + unsigned(one)) when cmp, -- 1010
