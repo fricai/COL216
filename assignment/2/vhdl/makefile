@@ -17,7 +17,7 @@ simulate:
 	@ghdl -r alu_tb --wave=output/alu_tb.ghw
 	@ghdl -r reg_file_tb --stop-time=1us --wave=output/reg_file_tb.ghw
 	@ghdl -r data_memory_tb --stop-time=2500ns --wave=output/data_memory_tb.ghw
-	@ghdl -r primary_memory_tb --wave=output/primary_memory_tb.ghw
+	@ghdl -r program_memory_tb --wave=output/program_memory_tb.ghw
 
 clean:
 	@echo "Cleaning temporary files..."
