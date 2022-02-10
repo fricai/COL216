@@ -14,8 +14,8 @@ entity alu is
 end alu;
 
 architecture beh of alu is
-	signal tmp: unsigned(32 downto 0);
-	signal op1_u, op2_u, nop1_u, nop2_u: unsigned(32 downto 0);
+	signal tmp: unsigned(word_size downto 0);
+	signal op1_u, op2_u, nop1_u, nop2_u: unsigned(word_size downto 0);
 begin
 	op1_u <= unsigned('0' & op1);
 	op2_u <= unsigned('0' & op2);
@@ -38,6 +38,6 @@ begin
 		       op2_u when mov, -- 1101
 		       op1_u and nop2_u when bic, -- 1110
 		       nop2_u when mvn; -- 1111
-	result <= std_logic_vector(tmp(31 downto 0));
-	carry_out <= tmp(32);
+	result <= std_logic_vector(tmp((word_size - 1) downto 0));
+	carry_out <= tmp(word_size);
 end beh;
