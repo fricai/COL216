@@ -6,8 +6,7 @@ use work.MyTypes.all;
 
 entity reg_file is
 	port(
-	read_addr1, read_addr2: in std_logic_vector(3 downto 0);
-	write_addr: in std_logic_vector(3 downto 0);
+	read_addr1, read_addr2, write_addr: in std_logic_vector(3 downto 0);
 	data_in: in word;
 	write_enable: in std_logic;
 	clock: in std_logic;
