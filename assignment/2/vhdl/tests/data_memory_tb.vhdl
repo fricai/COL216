@@ -4,10 +4,10 @@ use ieee.numeric_std.all;
 
 use work.MyTypes.all;
 
-entity data_memory_testbench is
-	end data_memory_testbench;
+entity data_memory_tb is
+end data_memory_tb;
 
-architecture tb of data_memory_testbench is
+architecture tb of data_memory_tb is
 	signal addr: word := (others => '0');
 	signal write_enable: std_logic_vector(3 downto 0) := (others => '0');
 	signal clock: std_logic := '0';

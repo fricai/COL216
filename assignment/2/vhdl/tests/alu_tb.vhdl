@@ -3,10 +3,10 @@ use ieee.std_logic_1164.all;
 
 use work.MyTypes.all;
 
-entity alu_testbench is
-end alu_testbench;
+entity alu_tb is
+end alu_tb;
 
-architecture tb of alu_testbench is
+architecture tb of alu_tb is
  	signal op1, op2: word;
  	signal result: word;
  	signal instr: optype;
@@ -14,7 +14,7 @@ architecture tb of alu_testbench is
  	signal carry_out: std_logic;
 
 	type op_constants_t is array (0 to 2) of word;
-	constant op_constants: op_constants_t := (X"FFFF_FFFF", X"0000_0000", X"0000_0001");
+	constant op_constants: op_constants_t := (X"7FFF_FFFF", X"0000_0000", X"0000_0001");
 begin
 	ALU: entity work.alu port map (
 		op1 => op1,
