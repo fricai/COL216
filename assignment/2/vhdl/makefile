@@ -1,12 +1,14 @@
 
-all: compile_src compile_tb test
+all: analyze test
 
-compile_src:
+analyze: analyze_src analyze_tb
+
+analyze_src:
 	@echo "Analyzing src files"
 	@ghdl -a src/types.vhdl
 	@ghdl -a src/alu.vhdl src/memory.vhdl src/reg_file.vhdl
 
-compile_tb:
+analyze_tb:
 	@echo "Analyzing testbenches"
 	@ghdl -a tests/alu_tb.vhdl tests/data_mem_tb.vhdl tests/program_mem_tb.vhdl tests/reg_file_tb.vhdl 
 
@@ -18,4 +20,5 @@ test:
 	@ghdl -r primary_memory_testbench --wave=output/primary_memory_tb.ghw
 
 clean:
-	rm *.cf
+	ghdl --clean
+	ghdl --remove
