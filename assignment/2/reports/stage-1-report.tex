@@ -22,7 +22,7 @@
 \maketitle
 
 \section{Objective}
-Construct an ALU, a register file, a primary memory unit and a data memory unit for a rudimentary ARM processor in VHDL.
+Construct an ALU, a register file, a program memory unit and a data memory unit for a rudimentary ARM processor in VHDL.
 
 \section{Technical Details}
 \begin{itemize}
@@ -40,10 +40,10 @@ The submission contains four VHDL files defining the various units,
 \end{itemize}
 Along with four testbenches for testing these units
 \begin{itemize}
-	\item \tt{alu_testbench.vhdl},
-	\item \tt{reg_file_testbench.vhdl},
-	\item \tt{primary_memory_testbench.vhdl}, and
-	\item \tt{data_memory_testbench.vhdl}.
+	\item \tt{alu_tb.vhdl},
+	\item \tt{reg_file_tb.vhdl},
+	\item \tt{program_memory_tb.vhdl}, and
+	\item \tt{data_memory_tb.vhdl}.
 \end{itemize}
 
 Along with the code, an output folder, containing the waveforms on simulating the testbenches, in the form of \tt{.ghw} and \tt{.pdf} files are stored in the output folder.
@@ -71,7 +71,7 @@ where \tt{word} and \tt{optype} data types are defined in \tt{types.vhdl}.
 In the case of logical operations, the \tt{carry_out} bit is set to $0$.
 
 \subsection*{\tt{memory.vhdl}}
-It defines the primary memory and data memory satisfying the specifications given in the problem statement.
+It defines the program memory and data memory satisfying the specifications given in the problem statement.
 
 Since the program memory is hardcoded, I decided to initialize it such that the $i$-th position stores the value $i$ for ease of testing.
 
@@ -167,6 +167,6 @@ The pdf files are also attached at the end of this report.
 
 \includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{alu_tb.pdf}};}]{../output/alu_tb.pdf}
 \includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{data_memory_tb.pdf}};}]{../output/data_memory_tb.pdf}
-\includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{primary_memory_tb.pdf}};}]{../output/primary_memory_tb.pdf}
+\includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{program_memory_tb.pdf}};}]{../output/program_memory_tb.pdf}
 \includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{reg_file_tb.pdf}};}]{../output/reg_file_tb.pdf}
 \end{document}
