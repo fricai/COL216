@@ -32,23 +32,29 @@ Construct an ALU, a register file, a program memory unit and a data memory unit 
 
 \section{Documentation}
 The submission contains four VHDL files defining the various units,
-\begin{itemize}
-	\item \tt{types.vhdl},
-	\item \tt{alu.vhdl},
-	\item \tt{reg_file.vhdl}, and
-	\item \tt{memory.vhdl}.
-\end{itemize}
+\begin{multicols}{2}
+	\begin{itemize}
+		\item \tt{types.vhdl},
+		\item \tt{alu.vhdl},
+		\item \tt{reg_file.vhdl}, and
+		\item \tt{memory.vhdl}.
+	\end{itemize}
+\end{multicols}
 Along with four testbenches for testing these units
-\begin{itemize}
-	\item \tt{alu_tb.vhdl},
-	\item \tt{reg_file_tb.vhdl},
-	\item \tt{program_memory_tb.vhdl}, and
-	\item \tt{data_memory_tb.vhdl}.
-\end{itemize}
+\begin{multicols}{2}
+	\begin{itemize}
+		\item \tt{alu_tb.vhdl},
+		\item \tt{reg_file_tb.vhdl},
+		\item \tt{program_memory_tb.vhdl}, and
+		\item \tt{data_memory_tb.vhdl}.
+	\end{itemize}
+\end{multicols}
 
-Along with the code, an output folder, containing the waveforms on simulating the testbenches, in the form of \tt{.ghw} and \tt{.pdf} files are stored in the output folder.
+Along with the code, the waveforms on simulating the testbenches, in the form of \tt{.ghw} and \tt{.pdf} files are stored in the output folder.
 
-For units with a clock, actions were performed only at the rising edge of the clock.
+The clocked actions were performed only at the \emph{rising edge} of the clock.
+
+\hspace{-1em}The details of the VHDL files is given below.
 
 \subsection*{\tt{types.vhdl}}
 This files defines some custom types for words, half-words and bytes along with an enumerated type for the 16 opcodes. It's taken from Piazza post 163, with minor modifications.
@@ -136,7 +142,7 @@ There are 4 testbenches,
 	\end{itemize}
 \end{multicols}
 
-These testbenches follow the rule that ports of the unit being tested are connected to the signals of the same name in the testbench. For example, \mintinline{vhdl}{signal op1} of the testbench \tt{alu_tb} is connected to the port \tt{op2} of the \tt{alu}.
+These testbenches follow the rule that ports of the unit being tested are connected to the signals of the same name in the testbench. For example, \mintinline{vhdl}{signal op1} of the testbench \tt{alu_tb} is connected to the port \tt{op1} of \tt{alu}.
 
 \subsection*{\tt{alu_tb}}
 This tests the ALU by iterating over 3 values of the two operands, \tt{0x7FFF_FFFF}, \tt{0x0000_0000}, and \tt{0x0000_0001}, and all possible opcodes and carry-in bits. Giving a total of $16 \times 2 \times 3 \times 3 = 288$ combination.
