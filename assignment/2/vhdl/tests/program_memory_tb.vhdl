@@ -4,10 +4,10 @@ use ieee.numeric_std.all;
 
 use work.MyTypes.all;
 
-entity primary_memory_testbench is
-end primary_memory_testbench;
+entity primary_memory_tb is
+end primary_memory_tb;
 
-architecture tb of primary_memory_testbench is
+architecture tb of primary_memory_tb is
 	signal addr: word := (others => '0');
 	signal data_out: word;
 begin

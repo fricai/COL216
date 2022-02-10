@@ -4,10 +4,10 @@ use ieee.numeric_std.all;
 
 use work.MyTypes.all;
 
-entity reg_file_testbench is
-	end reg_file_testbench;
+entity reg_file_tb is
+end reg_file_tb;
 
-architecture tb of reg_file_testbench is
+architecture tb of reg_file_tb is
 	constant addr_size: integer := 4;
 
 	signal read_addr1: std_logic_vector((addr_size - 1) downto 0) := (others => '0');
