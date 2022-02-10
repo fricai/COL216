@@ -1,6 +1,17 @@
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
+use work.MyTypes.all;
+
+entity program_memory is
+	port(
+		    addr: in word;
+		    data_out: out word);
+end program_memory;
+
+library ieee;
+use ieee.numeric_std.all;
+use ieee.std_logic_1164.all;
 
 use work.MyTypes.all;
 
@@ -12,17 +23,6 @@ entity data_memory is
 		    data_in: in word;
 		    data_out: out word);
 end data_memory;
-
-library ieee;
-use ieee.numeric_std.all;
-use ieee.std_logic_1164.all;
-use work.MyTypes.all;
-
-entity program_memory is
-	port(
-		    addr: in word;
-		    data_out: out word);
-end program_memory;
 
 architecture beh of program_memory is
 	type mem_t is array(0 to 63) of word;
