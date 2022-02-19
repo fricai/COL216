@@ -7,7 +7,8 @@ analyze_src:
 	@echo "Analyzing src files..."
 	@ghdl -a src/types.vhdl
 	@ghdl -a src/alu.vhdl src/memory.vhdl src/reg_file.vhdl
-	@ghdl -a src/program_counter.vhdl src/flag_circuit.vhdl src/cond_checker.vhdl
+	@ghdl -a src/program_counter.vhdl src/decoder.vhdl src/flag_circuit.vhdl src/cond_checker.vhdl
+	@ghdl -a src/processor.vhdl
 
 analyze_tb:
 	@echo "Analyzing testbenches..."
