@@ -13,15 +13,18 @@ end program_counter;
 
 architecture beh of program_counter is
 	signal pc: word;
+	signal shifted: word;
 begin
 	read <= pc;
+
 	process(reset, clock)
 	begin
-		if (reset = '1') then pc <= (others => '0');
+		if (reset = '1') then pc <= X"00000000";
 		elsif (rising_edge(clock)) then
 			case branch is
-				when '0' => pc <= std_logic_vector(signed(pc) + 4);
-				when others => pc <= std_logic_vector(signed(pc) + 8 + resize(signed(offset & "00"), word_size));
+				when '0' => pc <= std_logic_vector(unsigned(pc) + 4);
+				when others => pc <= std_logic_vector(unsigned(pc) + 8 +
+					unsigned(resize(signed(offset & "00"), word_size)));
 				-- resize signed should take care of sign extension
 			end case;
 		end if;

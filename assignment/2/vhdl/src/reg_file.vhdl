@@ -15,7 +15,7 @@ end reg_file;
 
 architecture beh of reg_file is
 	type mem_t is array(0 to 15) of word;
-	signal mem: mem_t;
+	signal mem: mem_t; -- := (others => (others => '0'));
 begin
 	data_out1 <= mem(to_integer(unsigned(read_addr1)));
 	data_out2 <= mem(to_integer(unsigned(read_addr2)));

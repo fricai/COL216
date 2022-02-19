@@ -5,17 +5,13 @@ use IEEE.NUMERIC_STD.all;
 use work.MyTypes.all;
 
 -- refer to page 40 of lecture 9 for the port mappings
-entity processor is
-	port(
-	clock, reset: in std_logic
--- PW, Psrc, Rsrc, RW, Fset, Asrc, MW, M2R: in std_logic
-);
+entity processor is port(clock, reset: in std_logic);
 end processor;
 
 architecture rtl of processor is
 	signal branch_offset: std_logic_vector(23 downto 0);
 	signal branch: std_logic;
-	signal p_addr: word;
+	signal pc_addr: word;
 
 	signal instruction: word;
 
@@ -53,14 +49,15 @@ begin
 							 reset => reset,
 							 offset => branch_offset,
 							 branch => branch,
-							 read => p_addr
+							 read => pc_addr
 						 );
+
 
 	branch_offset <= instruction(23 downto 0);
 	branch <= '1' when instr_class = BRN and cond_true = '1' else '0';
 
 	IM: entity work.program_memory port map (
-							addr => p_addr,
+							addr => pc_addr,
 							data_out => instruction
 						);
 
@@ -92,7 +89,7 @@ begin
 						  data_out2 => reg_out2
 					  );
 	reg_in <= DM_out when instr_class = DT else alu_out;
-	reg_en <= '1' when (instr_class = DT and load_store = store) or
+	reg_en <= '1' when (instr_class = DT and load_store = load) or
 		  (instr_class = DP and (DP_subclass = arith or DP_subclass = logic)) else
 		  '0';
 
@@ -139,7 +136,7 @@ begin
 						      res => cond_true
 					      );
 
-	DM_en <= "1111" when instr_class = DT and load_store = load else "0000";
+	DM_en <= "1111" when instr_class = DT and load_store = store else "0000";
 	DM: entity work.data_memory port map (
 						     clock => clock,
 						     write_enable => DM_en,
