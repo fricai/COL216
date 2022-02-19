@@ -26,7 +26,7 @@ begin
 		       (not C) or Z when ls,
 		       not(N xor V) when ge, -- N = V
 		       (N xor V) when lt, -- N != V
-		       (not Z) and (not (N xor V)) when gt,
+		       (not Z) and (N xnor V) when gt,
 		       Z or (N xor V) when le,
 		       '1' when al;
 end beh;

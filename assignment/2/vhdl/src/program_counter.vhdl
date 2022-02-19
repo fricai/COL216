@@ -7,7 +7,7 @@ use work.MyTypes.all;
 entity program_counter is
 	Port (
 	reset, clock, branch: in std_logic;
-	offset: in word;
+	offset: in std_logic_vector(23 downto 0);
 	read: out word);
 end program_counter;
 
