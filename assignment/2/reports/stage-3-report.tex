@@ -1,0 +1,85 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage[a4paper, total={6.5in, 8.5in}]{geometry}
+
+\usepackage{multicol}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\usepackage{pdfpages}
+
+\title{COL216 Assignment 2\\{\Large Stage 3}}
+\date{25 February 2022}
+\author{Rishabh Dhiman\\ 2020CS10837}
+
+\renewcommand{\tt}{\mintinline{text}}
+\newcommand{\reg}{\mintinline{arm}}
+
+\newcommand{\addwaveformpdf}[1]{
+	\includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{#1.pdf}};}]{../output/#1.pdf}
+}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+Construct an ALU, a register file, a program memory unit and a data memory unit for a rudimentary ARM processor in VHDL.
+
+\section{Technical Details}
+\begin{itemize}
+	\item The VHDL code was analyzed, and simulated using GHDL 1.0.0.
+	\item The VHDL code was synthesized using Quartus 21.1.
+	\item The waveform viewer used is GTKWave Analyzer v3.3.104.
+\end{itemize}
+
+\section{Documentation}
+The submission contains modified
+\begin{itemize}
+	\item \tt{processor.vhdl} which implements the processor as a multicycle design
+	\item \tt{program_counter.vhdl} without a dedicated adder
+	\item \tt{memory.vhdl} a combined memory module, the program information is still hardcode into the memory
+	\item \tt{decoder.vhdl}, \tt{types.vhdl} which contain minor changes.
+\end{itemize}
+There's a single testbench \tt{processor_tb.vhdl}.
+
+Along with the code, the waveforms on simulating the testbench, in the form of \tt{.ghw} and \tt{.pdf} files are stored in the \tt{simulation} folder. Two netlists of the processor have been added in the \tt{synthesis} directory, one corresponding to a one-hot encoding of the enumerated type and other corresponding to a sequential encoding.
+
+\section{Testing Procdure}
+The code was analyzed, and simulated using GHDL. It was synthesized using Quartus 21.1.
+
+You can simulate it yourself using the \tt{makefile} provided in the \tt{code} directory.
+\begin{enumerate}
+	\item Ensure that Make and GHDL are installed.
+	\item Create a folder called \tt{simulation} inside the directory (if it doesn't exist already).
+	\item In the commandline, run \tt{make} or \tt{make all} to analyze, and then simulate the testbenches.
+	\item A \tt{processor.ghw} waveform file will be created in the simulation directory. Note that the earlier file will be overwritten.
+	\item You can finally run \tt{make clean} to delete any temporary files created in the process.
+\end{enumerate}
+
+\subsection*{\tt{processor_tb}}
+This simply executes the program that has been hardcoded into the program memory.
+
+The two sample programs provided in stage 2, after minor modification, were used for testing.
+
+The modifcation being that \tt{#10} in the first program was changed to \tt{#64}.
+
+\section{Results}
+All the testbenches gave the expected results.
+\begin{itemize}
+	\item In the first test, at the end of program, word location 16 and 17 in the memory contain 5 and 7 respectively. \reg{r0}, \reg{r1}, \reg{r2}, \reg{r3}, \reg{r4} contain \tt{0x40}, 7, 5, 7 and 2, respectively.
+	\item In the second test, the program loops 5 times before terminating, ending with \reg{r1} having value 5, and \reg{r0} containing sum of the preceeding values of \reg{r0} that is $0 + 1 + 2 + 3 + 4 = 10$.
+\end{itemize}
+
+The output waveform of the testbench results can be viewed in .ghw and .pdf files in the output folder.
+
+The .pdf files don't contain the entire waveform in some cases as the total number of pages required would be prohibitively large. However, the .ghw files can be opened in any waveform analyzer like GTKWave to view the output waveform.
+
+The pdf files of the simulation are also attached at the end of this report. The netlist haven't been appended due to their larger size.
+
+\addwaveformpdf{processor_tb_program_1}
+\addwaveformpdf{processor_tb_program_2}
+\end{document}

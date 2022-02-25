@@ -28,8 +28,6 @@ begin
 	res_b <= result(word_size - 1);
 
 
-	assert S = '0' report "Non-zero S in flag circuit" severity failure;
-	-- just assume S_bit is always 0
 
 	process(clock, enable)
 	begin
@@ -60,7 +58,9 @@ begin
 					end case;
 					N <= res_b;
 
-				when others => null;
+				when others =>
+					assert S = '0' report "Non-zero S in flag circuit" severity failure;
+			-- just assume S_bit is always 0
 			end case;
 		end if;
 	end process;
