@@ -16,7 +16,9 @@ entity decoder is
 		     load_store: out load_store_type;
 		     DT_offset_sign: out DT_offset_sign_type;
 		     cond: out condtype;
-		     S_bit: out std_logic
+		     S_bit: out std_logic;
+		     branch_offset: out std_logic_vector(23 downto 0);
+		     Rm, Rd, Rn: out std_logic_vector(3 downto 0)
 	     );
 end decoder;
 
@@ -48,4 +50,10 @@ begin
 	cond <= condarray(to_integer(unsigned(instruction(31 downto 28))));
 
 	S_bit <= instruction(20);
+
+	branch_offset <= instruction(23 downto 0);
+
+	Rm <= instruction(3 downto 0);
+	Rd <= instruction(15 downto 12);
+	Rn <= instruction(19 downto 16);
 end behavioral;

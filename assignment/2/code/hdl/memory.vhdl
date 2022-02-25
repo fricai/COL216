@@ -4,21 +4,20 @@ use ieee.std_logic_1164.all;
 
 use work.MyTypes.all;
 
-entity data_memory is
+entity memory is
 	port(
 		    addr: in word;
 		    write_enable: in std_logic_vector(3 downto 0);
 		    clock: in std_logic;
 		    data_in: in word;
 		    data_out: out word);
-end data_memory;
+end memory;
 
-architecture beh of data_memory is
-	type mem_t is array(0 to 63) of word;
+architecture beh of memory is
+	type mem_t is array(0 to 127) of word;
 	signal mem: mem_t;
-
 begin
-	data_out <= mem(to_integer(unsigned(addr(7 downto 2))));
+	data_out <= mem(to_integer(unsigned(addr(8 downto 2))));
 	-- get rid of last two bits
 
 	process(clock)

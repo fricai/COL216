@@ -19,6 +19,8 @@ package MyTypes is
 	-- my additions
 	constant word_size: integer := 32;
 	type condtype is (eq, ne, cs, cc, mi, pl, vs, vc, hi, ls, ge, lt, gt, le, al);
+
+	type control_state_type is (fetch, read_AB, arith, load_resB, load_DR, store_DR, branch_shift, store_res, final_store);
 end MyTypes;
 
 package body MyTypes is
