@@ -7,7 +7,7 @@ use IEEE.NUMERIC_STD.ALL;
 use work.MyTypes.all;
 
 entity decoder is
-	Port (
+	port (
 		     instruction: in word;
 		     instr_class: out instr_class_type;
 		     operation: out optype;
@@ -18,7 +18,9 @@ entity decoder is
 		     cond: out condtype;
 		     S_bit: out std_logic;
 		     branch_offset: out std_logic_vector(23 downto 0);
-		     Rm, Rd, Rn: out std_logic_vector(3 downto 0)
+		     Rm, Rd, Rn: out std_logic_vector(3 downto 0);
+		     imm8: out std_logic_vector(7 downto 0);
+		     imm12: out std_logic_vector(11 downto 0)
 	     );
 end decoder;
 
@@ -56,4 +58,7 @@ begin
 	Rm <= instruction(3 downto 0);
 	Rd <= instruction(15 downto 12);
 	Rn <= instruction(19 downto 16);
+
+	imm8 <= instruction(7 downto 0);
+	imm12 <= instruction(11 downto 0);
 end behavioral;
