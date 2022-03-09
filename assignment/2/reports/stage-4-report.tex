@@ -1,0 +1,108 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage{amsmath, amssymb}
+
+\usepackage[T1]{fontenc}
+\usepackage[a4paper, total={6.5in, 8.7in}]{geometry}
+
+\usepackage{multicol}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\usepackage{pdfpages}
+
+\title{COL216 Assignment 2\\{\Large Stage 4}}
+\date{6 March 2022}
+\author{Rishabh Dhiman\\ 2020CS10837}
+
+\renewcommand{\tt}{\mintinline{text}}
+\newcommand{\reg}{\mintinline{arm}}
+
+\newcommand{\addwaveformpdf}[1]{
+	\includepdf[landscape=true, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{#1.pdf}};}]{../output/#1.pdf}
+}
+\newcommand{\addprogramcode}[1]{%
+\begin{minipage}{.25\textwidth}%
+    \inputminted[linenos]{text}{../code/arm/binary/#1.txt}%
+\end{minipage}%
+\begin{minipage}{.7\textwidth}%
+    \inputminted{arm}{../code/arm/assembly/#1.s}%
+\end{minipage}%
+}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+Test the processor designed in previous stages using ARM assembly codes.
+
+\section{Technical Details}
+\begin{itemize}
+	\item The VHDL code was analyzed, and simulated using GHDL 1.0.0.
+	\item The waveform viewer used is GTKWave Analyzer v3.3.104.
+\end{itemize}
+
+\section{Documentation}
+The submission contains a single \tt{arm} directory along with a \tt{makefile}.
+
+The \tt{arm} directory contains three folders, \tt{scripts}, \tt{assembly} and \tt{binary}.
+\begin{itemize}
+    \item \tt{scripts} directory contains two bash scripts \tt{to-bin.sh} and \tt{create-mem.sh}.
+    \item \tt{assembly} directory contains three assembly codes, \tt{fact.s}, \tt{range-sum.s}, and \tt{neg-fib.s}.
+    \item \tt{binary} directory contains three text files \tt{fact.txt}, \tt{range-sum.txt}, and \tt{neg-fib.txt}.
+\end{itemize}
+
+\section{Testing Procdure}
+The code was analyzed, and simulated using GHDL. It was synthesized using Quartus 21.1.
+
+You can simulate it yourself by copying the files to the folder containing the stage 3 submission.
+\begin{enumerate}
+    \item Ensure that you are using a Linux machine with Make and GHDL installed.
+    \item Create a directory \tt{simulation/arm-tests/} exists (if it doesn't already exist).
+    \item In the commandline, run \tt{make testarm INPUT=} $X$ where $X \in \{$\tt{fact}, \tt{range-sum}, \tt{neg-fib}$\}$.
+    \item A $X$\tt{.ghw} waveform file will be created in the \tt{simulation/arm-tests} directory. Note that the earlier file will be overwritten.
+\end{enumerate}
+
+\section{Script Description}
+The script, \tt{to-bin.sh} takes as argument the path to an ARM file and outputs the corresponding binary instruction code. It assumes that \tt{arm-linux-gnueabi} toolchain is installed, along with some common linux binaries.
+
+The script, \tt{create-mem.sh} takes as argument the path to an ARM file and outputs the corresponding VHDL memory file with the ARM code hardcoded into it.
+
+\section{Program Descriptions}
+The description of the three programs follow,
+
+\subsection{\texttt{fact}}
+
+This computes $3!$ and stores the result in \reg{r0}. The code and the corresponding binary-encoded instructions are,
+
+\addprogramcode{fact}
+\clearpage
+
+\subsection{\texttt{range-sum}}
+This computes and stores $0 + 1 + \dots + i$ at memory location $64 + i$, for $0 \le i < 5$. This computation is done as $a[i] = a[i - 1] + i$, $a[0] = 0$. So that \reg{ldr} and \reg{str} are properly tested.
+
+\addprogramcode{range-sum}
+\clearpage
+
+\subsection{\texttt{neg-fib}}
+This computes the negative Fibonacci numbers, $F_{-i}$. If $a_i = F_{-i}$, then
+\[F_{i + 2} = F_{i + 1} + F_{i} \implies F_i = F_{i + 2} - F_{i + 1} \implies a_i = F_{-i} = F_{-i + 2} - F_{-i + 1} = a_{i - 2} - a_{i - 1}.\]
+$F_{-i}$ is stored in memory location, $64 + i$, for $0 \le i \le 8$.
+
+\addprogramcode{neg-fib}
+\clearpage
+
+\section{Results}
+All the testbenches gave the expected results.
+
+The output waveform of the testbench results can be viewed in .ghw and .pdf files in the output folder.
+
+The pdf files of the simulation are also attached at the end of this report.
+
+\addwaveformpdf{arm-tests/fact}
+\addwaveformpdf{arm-tests/range-sum}
+\addwaveformpdf{arm-tests/neg-fib}
+\end{document}

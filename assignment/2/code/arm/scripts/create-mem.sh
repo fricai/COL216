@@ -1,3 +1,6 @@
+cur_path=$(readlink -f $0 | sed 's|\(.*\)/.*|\1|')
+
+cat << EOF
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
@@ -17,22 +20,9 @@ architecture beh of memory is
 	type mem_t is array(0 to 127) of word;
 	signal mem: mem_t :=
 	(
-		0 => X"E3A000FF",
-		1 => X"E2800001",
-		2 => X"E3A01000",
-		3 => X"E5801000",
-		4 => X"E5901000",
-		5 => X"E2811001",
-		6 => X"E5801004",
-		7 => X"E5901004",
-		8 => X"E2811002",
-		9 => X"E5801008",
-		10 => X"E5901008",
-		11 => X"E2811003",
-		12 => X"E580100C",
-		13 => X"E590100C",
-		14 => X"E2811004",
-		15 => X"E5801010",
+EOF
+$cur_path/to-bin.sh $1 | awk '{print "\t\t" NR-1 " => X\"" toupper(substr($0, 1, length($0) - 1))"\","}'
+cat << EOF
 		others => X"00000000"
 	);
 begin
@@ -51,3 +41,4 @@ begin
 		end if;
 	end process;
 end beh;
+EOF
