@@ -18,14 +18,17 @@ package MyTypes is
 
 	-- my additions
 	constant word_size: integer := 32;
+    constant log_word_size: integer := 5;
 	type condtype is (eq, ne, cs, cc, mi, pl, vs, vc, hi, ls, ge, lt, gt, le, al);
 
 	type control_state_type is (fetch, read_AB, arith, load_resB, load_DR, store_DR, branch_shift, store_res, final_store);
 
-	attribute enum_encoding: string;
-	attribute enum_encoding of condtype: type is "sequential";
-	attribute enum_encoding of optype: type is "sequential";
-	attribute enum_encoding of control_state_type: type is "sequential";
+    type shift_type is (lsl, lsr, asr, opror);
+
+	-- attribute enum_encoding: string;
+	-- attribute enum_encoding of condtype: type is "sequential";
+	-- attribute enum_encoding of optype: type is "sequential";
+	-- attribute enum_encoding of control_state_type: type is "sequential";
 end MyTypes;
 
 package body MyTypes is
