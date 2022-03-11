@@ -49,7 +49,8 @@ architecture rtl of reverser is
 begin
     only_gen:
     for i in 0 to (word_size - 1) generate
-        output(i) <= input(word_size - i - 1) when sel = '1' else input(i);
+        output(i) <= input(word_size - i - 1) when sel = '1' else
+                     input(i);
     end generate;
 end rtl;
 
