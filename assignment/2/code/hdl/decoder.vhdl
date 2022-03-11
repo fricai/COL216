@@ -18,21 +18,24 @@ entity decoder is
 		     cond           : out condtype;
 		     S_bit          : out std_logic;
 		     branch_offset  : out std_logic_vector(23 downto 0);
-		     Rm, Rd, Rn     : out std_logic_vector(3 downto 0);
-		     imm8           : out std_logic_vector(7 downto 0);
+		     Rm, Rd, Rn     : out std_logic_vector( 3 downto 0);
+		     imm8           : out std_logic_vector( 7 downto 0);
              imm12          : out std_logic_vector(11 downto 0);
              rottype        : out shift_type;
              shift5         : out std_logic_vector(4 downto 0);
              shift4         : out std_logic_vector(3 downto 0);
-             shift_reg      : out std_logic_vector(3 downto 0));
+             shift_reg      : out std_logic_vector(3 downto 0);
+             DT_reg_offset  : out std_logic);
 end decoder;
 
 architecture behavioral of decoder is
 	type oparraytype is array (0 to 15) of optype;
-	constant oparray: oparraytype := (andop, eor, sub, rsb, add, adc, sbc, rsc, tst, teq, cmp, cmn, orr, mov, bic, mvn);
+	constant oparray: oparraytype := (andop, eor, sub, rsb, add, adc, sbc, rsc, tst, teq,
+                                      cmp, cmn, orr, mov, bic, mvn);
 
 	type condarraytype is array (0 to 14) of condtype;
-	constant condarray: condarraytype := (eq, ne, cs, cc, mi, pl, vs, vc, hi, ls, ge, lt, gt, le, al);
+	constant condarray: condarraytype := (eq, ne, cs, cc, mi, pl, vs, vc, hi, ls,
+                                          ge, lt, gt, le, al);
 
     type rotarraytype is array(0 to 3) of shift_type;
     constant rotarray: rotarraytype := (lsl, lsr, asr, opror);
@@ -72,4 +75,6 @@ begin
     shift5    <= instruction(11 downto 7);
     shift4    <= instruction(11 downto 8);
     shift_reg <= instruction(11 downto 8);
+
+    DT_reg_offset <= instruction(25);
 end behavioral;
