@@ -34,7 +34,7 @@ architecture rtl of processor is
     signal shift4         : std_logic_vector(3 downto 0);
     signal shift_reg      : std_logic_vector(3 downto 0);
     signal rottype        : shift_type;
-
+    signal DT_reg_offset  : std_logic;
 
     -- ALU
     signal operand1, operand2, alu_out : word;
@@ -201,13 +201,6 @@ begin
                     reg_write_en <= '1';
                     reg_in       <= Res;
                 end if;
-            when load_resB =>
-                reg_read_addr2 <= Rd;
-                operand2       <= X"00000" & imm12;
-                case DT_offset_sign is
-                    when plus  => alu_op <= add;
-                    when minus => alu_op <= sub;
-                end case;
             when final_store =>
                 mem_addr     <= res;
                 mem_write_en <= "1111";
@@ -223,15 +216,30 @@ begin
                 operand1    <= "00" & pc_out((word_size - 1) downto 2);
                 operand2    <= word(resize(signed(branch_offset), word_size));
                 alu_cin     <= '1';
-            when constant_shift => null;
-            when variable_shift_read =>
+            when DP_constant_shift => null;
+            when DP_variable_shift_read =>
                 reg_read_addr1 <= shift_reg;
-            when variable_shift_shift =>
+            when DP_variable_shift_shift =>
                 shift_amount <= X((log_word_size - 1) downto 0);
-            when imm_shift =>
+            when DP_imm_shift =>
                 shifter_input <= std_logic_vector(resize(unsigned(imm8), word_size));
                 shift_op      <= opror;
                 shift_amount  <= shift4 & "0";
+            when DT_imm_offset_state =>
+                reg_read_addr2 <= Rd;
+                operand2       <= X"00000" & imm12;
+                case DT_offset_sign is
+                    when plus  => alu_op <= add;
+                    when minus => alu_op <= sub;
+                end case;
+            when DT_reg_offset_shift_state => null;
+            when DT_reg_offset_alu_state   =>
+                reg_read_addr2 <= Rd;
+                operand2       <= D;
+                case DT_offset_sign is
+                    when plus  => alu_op <= add;
+                    when minus => alu_op <= sub;
+                end case;
         end case;
     end process;
 
@@ -254,7 +262,8 @@ begin
                          rottype        => rottype,
                          shift5         => shift5,
                          shift4         => shift4,
-                         shift_reg      => shift_reg
+                         shift_reg      => shift_reg,
+                         DT_reg_offset  => DT_reg_offset
                      );
 
     CC: entity work.cond_checker port map (
@@ -287,12 +296,19 @@ begin
                             case DP_operand_src is
                                 when reg =>
                                     case IR(4) is -- constant shift or not
-                                        when '0'    => control_state <= constant_shift;
-                                        when others => control_state <= variable_shift_read;
+                                        when '0'    => control_state <= DP_constant_shift;
+                                        when others => control_state <= DP_variable_shift_read;
                                     end case;
-                                when imm => control_state <= imm_shift;
+                                when imm => control_state <= DP_imm_shift;
                             end case;
-                        when DT  => control_state <= load_resB;
+                        when DT  =>
+                            case DT_reg_offset is
+                                when '1'    => control_state <= DT_reg_offset_shift_state;
+                                -- offset comes from reg
+                                when others => control_state <= DT_imm_offset_state;
+                                -- offset is immediate
+                            -- control_state <= load_resB;
+                            end case;
                         when BRN => control_state <= branch_shift;
                         when others => null;
                     end case;
@@ -302,7 +318,7 @@ begin
                 when store_res =>
                     -- store into Rd from Res
                     control_state <= fetch;
-                when load_resB =>
+                when DT_imm_offset_state =>
                     B   <= reg_out2;
                     Res <= alu_out;
                     case load_store is
@@ -314,25 +330,35 @@ begin
                     control_state <= fetch;
                 when load_DR =>
                     -- load into DR from mem[Res]
-                    DR <= mem_out;
+                    DR            <= mem_out;
                     control_state <= store_dr;
                 when store_DR =>
                     -- store DR into Rd
                     control_state <= fetch;
                 when branch_shift =>
                     control_state <= fetch;
-                when constant_shift =>
+                when DP_constant_shift =>
                     D             <= shifter_output;
                     control_state <= arith;
-                when variable_shift_read =>
+                when DP_variable_shift_read =>
                     X             <= reg_out1;
-                    control_state <= variable_shift_shift;
-                when variable_shift_shift =>
+                    control_state <= DP_variable_shift_shift;
+                when DP_variable_shift_shift =>
                     D             <= shifter_output;
                     control_state <= arith;
-                when imm_shift =>
+                when DP_imm_shift =>
                     D             <= shifter_output;
                     control_state <= arith;
+                when DT_reg_offset_shift_state =>
+                    D             <= shifter_output;
+                    control_state <= DT_reg_offset_alu_state;
+                when DT_reg_offset_alu_state =>
+                    B   <= reg_out2;
+                    Res <= alu_out;
+                    case load_store is
+                        when store => control_state <= final_store;
+                        when load  => control_state <= load_dr;
+                    end case;
             end case;
         end if;
     end process;

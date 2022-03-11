@@ -23,9 +23,10 @@ package MyTypes is
     constant log_word_size : integer := 5;
 
     type condtype           is (eq, ne, cs, cc, mi, pl, vs, vc, hi, ls, ge, lt, gt, le, al);
-    type control_state_type is (fetch, read_AB, arith, load_resB, load_DR, store_DR,
-                                branch_shift, store_res, final_store, constant_shift,
-                                variable_shift_read, variable_shift_shift, imm_shift);
+    type control_state_type is (fetch, read_AB, arith, load_DR, store_DR, branch_shift,
+                                store_res, final_store, DP_constant_shift, DP_variable_shift_read,
+                                DP_variable_shift_shift, DP_imm_shift, DT_imm_offset_state,
+                                DT_reg_offset_shift_state, DT_reg_offset_alu_state);
     type shift_type         is (lsl, lsr, asr, opror);
 
     -- attribute enum_encoding: string;
