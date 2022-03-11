@@ -1,8 +1,7 @@
 @ compute negative fibonacci as a[i] = a[i - 2] - a[i - 1]
 @  where a = mem[64], a[0] = 0, a[1] = 1
 
-mov r0, #255
-add r0, #1
+mov r0, #256
 @ location of a
 
 mov r1, #0

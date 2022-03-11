@@ -1,6 +1,5 @@
 .text
-mov r0, #255
-add r0, #1 
+mov r0, #256
 @ r0 = 4 * base
 
 @ in base, base + 1, ..., base + 5 - 1, where base = 64

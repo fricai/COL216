@@ -44,7 +44,7 @@ testarm:
 	@echo ""
 	@echo "Analyzing VHDL component files..."
 	@ghdl -a hdl/types.vhdl
-	@ghdl -a hdl/alu.vhdl hdl/memory.vhdl hdl/reg_file.vhdl
+	@ghdl -a hdl/alu.vhdl hdl/memory.vhdl hdl/reg_file.vhdl hdl/shifter.vhdl
 	@ghdl -a hdl/program_counter.vhdl hdl/decoder.vhdl hdl/flag_circuit.vhdl hdl/cond_checker.vhdl
 	@ghdl -a hdl/processor.vhdl
 	@echo "Analysis over"
