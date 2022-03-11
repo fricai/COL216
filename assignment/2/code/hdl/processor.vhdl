@@ -230,6 +230,7 @@ begin
                 shift_amount <= X((log_word_size - 1) downto 0);
             when imm_shift =>
                 shifter_input <= std_logic_vector(resize(unsigned(imm8), word_size));
+                shift_op      <= opror;
                 shift_amount  <= shift4 & "0";
         end case;
     end process;
