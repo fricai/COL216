@@ -144,8 +144,8 @@ begin
     pc_reset <= '0' when reset = '0' else '1';
     pc_in <= alu_out(29 downto 0) & "00";
 
-    process(control_state, operation, A, B, C_flag, Rn, Rm, Rd, DR, pc_out, instr_class,
-        DP_operand_src, imm8, Res, imm12, DT_offset_sign, cond_true, branch_offset)
+    process(control_state, operation, A, B, D, X, shifter_output, C_flag, Rn, Rm, Rd, DR, pc_out,
+        instr_class, DP_operand_src, imm8, Res, imm12, DT_offset_sign, cond_true, branch_offset)
     begin
         -- default values
 
@@ -185,10 +185,11 @@ begin
                 operand1    <= "00" & pc_out(31 downto 2);
                 operand2    <= (others => '0');
                 alu_cin     <= '1';
-            when read_AB =>
-                if (instr_class = DT) then
-                    reg_read_addr2 <= Rd;
-                end if;
+            when read_AB => null;
+                -- why did I ever have this?
+                -- if (instr_class = DT) then
+                --    reg_read_addr2 <= Rd;
+                -- end if;
             when arith =>
                 F_en <= '1';
                 -- We instead store the rotated immediate value in X
