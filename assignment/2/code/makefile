@@ -2,11 +2,19 @@ all: analyze analyze simulate
 
 analyze: analyze_src analyze_tb
 
-analyze_shifter:
+shifter:
 	@echo "Analyzing VHDL shifter component files..."
-	@ghdl -a hdl/types.vhdl
-	@ghdl -a hdl/shifter.vhdl
-	@echo "Analysis over"
+	@ghdl -a --std=08 hdl/types.vhdl
+	@ghdl -a --std=08 hdl/shifter.vhdl
+	@echo "Analysis over\n"
+	@
+	@echo "Analyzing VHDL shifter testbench..."
+	@ghdl -a --std=08 tests/shifter_tb.vhdl
+	@echo "Analysis over\n"
+	@
+	@echo "Simulating testbench..."
+	@ghdl -r --std=08 shifter_tb --wave=simulation/shifter.ghw
+	@echo "Simulation over"
 
 analyze_src:
 	@echo "Analyzing VHDL component files..."
