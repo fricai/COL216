@@ -24,16 +24,16 @@ package MyTypes is
 
     type condtype           is (eq, ne, cs, cc, mi, pl, vs, vc, hi, ls, ge, lt, gt, le, al);
     type control_state_type is (fetch, read_AB, arith, load_DR, store_DR, branch_shift,
-                                store_res, final_store, DP_constant_shift, DP_variable_shift_read,
+                                store_res, final_store, imm_shift_state, DP_variable_shift_read,
                                 DP_variable_shift_shift, DP_imm_shift, DT_imm_offset_state,
-                                DT_reg_offset_shift_state, DT_reg_offset_alu_state);
+                                DT_reg_offset_alu_state);
     type shift_type         is (lsl, lsr, asr, opror);
 
-    attribute enum_encoding : string;
-    attribute enum_encoding of condtype           : type is "sequential";
-    attribute enum_encoding of optype             : type is "sequential";
-    attribute enum_encoding of control_state_type : type is "sequential";
-    attribute enum_encoding of shift_type         : type is "sequential";
+    -- attribute enum_encoding : string;
+    -- attribute enum_encoding of condtype           : type is "sequential";
+    -- attribute enum_encoding of optype             : type is "sequential";
+    -- attribute enum_encoding of control_state_type : type is "sequential";
+    -- attribute enum_encoding of shift_type         : type is "sequential";
 end MyTypes;
 
 package body MyTypes is
