@@ -13,7 +13,7 @@ shifter:
 	@echo "Analysis over\n"
 	@
 	@echo "Simulating testbench..."
-	@ghdl -r --std=08 shifter_tb --wave=simulation/shifter.ghw
+	@ghdl -r --std=08 shifter_tb --wave=simulation/shifter_tb.ghw
 	@echo "Simulation over"
 
 analyze_src:
