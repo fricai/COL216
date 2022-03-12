@@ -1,0 +1,176 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage{dirtree}
+
+\usepackage{amsmath, amssymb}
+
+\usepackage[T1]{fontenc}
+\usepackage[a4paper, total={6.5in, 8.7in}]{geometry}
+
+\usepackage{multicol}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\usepackage{pdfpages}
+
+\title{COL216 Assignment 2\\{\Large Stage 5}}
+\date{12 March 2022}
+\author{Rishabh Dhiman\\ 2020CS10837}
+
+\renewcommand{\tt}{\mintinline{text}}
+\newcommand{\reg}{\mintinline{arm}}
+
+\newcommand{\addwaveformpdf}[2][true]{
+	\includepdf[landscape=#1, picturecommand*={\put (\LenToUnit{.05\paperwidth},20) {\tt{#2.pdf}};}]{../output/#2.pdf}
+}
+\newcommand{\addprogramcode}[1]{%
+\begin{minipage}{.25\textwidth}%
+    \inputminted[linenos]{text}{../code/arm/binary/#1.txt}%
+\end{minipage}%
+\begin{minipage}{.7\textwidth}%
+    \inputminted{arm}{../code/arm/assembly/#1.s}%
+\end{minipage}%
+}
+
+\begin{document}
+\maketitle
+
+\section{Objective}
+Test the processor designed in previous stages using ARM assembly codes.
+
+\section{Technical Details}
+\begin{itemize}
+	\item The VHDL code was analyzed, and simulated using GHDL 1.0.0.
+	\item The waveform viewer used is GTKWave Analyzer v3.3.104.
+    \item The VHDL code was synthesised, and netlist generated using Quartus 21.1.
+\end{itemize}
+
+\section{Directory Structure}
+The directory structure reflects the previous submissions.
+The directory structure of this submission is as given on the next page.
+
+The following VHDL component files are new or have been updated,
+\begin{multicols}{4}
+    \begin{itemize}
+        \item \tt{processor.vhdl},
+        \item \tt{shifter.vhdl},
+        \item \tt{types.vhdl}, and
+        \item \tt{decoder.vhdl}.
+    \end{itemize}
+\end{multicols}
+\tt{shifter_tb.vhdl} defines a testbench for testing the new \tt{shifter} component.
+
+A new assembly program, \tt{test-dp-rot.s} has been created to test the DP rotation/shift operations. A C++ program to verify it's output has also been created.
+Along with this, \tt{neg-fib.s} has been updated to use LDR register offset instructions. The corresponding binary representation of the instructions, and the waveform created on testing have also been added.
+
+The netlist of the entire processor along with the new shifter component have also been attached. The states of the control FSM have also been attached.
+
+\clearpage
+\dirtree{%
+.1 2020CS10837-assgn-2-stage-5/.
+.2 stage-5-report.pdf.
+.2 code/.
+.3 makefile.
+.3 arm/.
+.4 assembly/.
+.5 neg-fib.s.
+.5 test-dp-rot.s.
+.4 binary/.
+.5 neg-fib.txt.
+.5 test-dp-rot.txt.
+.4 c++/.
+.5 test-dp-rot.cpp.
+.4 scripts/.
+.5 create-mem.sh.
+.5 to-bin.sh.
+.3 hdl/.
+.4 alu.vhdl.
+.4 cond\_checker.vhdl.
+.4 decoder.vhdl.
+.4 flag\_circuit.vhdl.
+.4 memory.vhdl.
+.4 processor.vhdl.
+.4 program\_counter.vhdl.
+.4 reg\_file.vhdl.
+.4 shifter.vhdl.
+.4 types.vhdl.
+.3 simulation/.
+.4 arm-tests.
+.3 tests/.
+.4 processor\_tb.vhdl.
+.4 shifter\_tb.vhdl.
+.2 output/.
+.3 arm-tests/.
+.4 neg-fib.ghw.
+.4 neg-fib.pdf.
+.4 test-dp-rot.ghw.
+.4 test-dp-rot.pdf.
+.3 synthesis/.
+.4 processor\_control\_state.pdf.
+.4 processor\_netlist.pdf.
+.4 shifter\_netlist.pdf.
+.3 waveforms/.
+.4 shifter\_tb.ghw.
+.4 shifter\_tb.pdf.
+}
+
+\section{Testing Procdure}
+The code was analyzed, and simulated using GHDL. It was synthesized using Quartus 21.1.
+
+You can simulate it yourself as follows.
+\begin{enumerate}
+    \item Ensure that you are using a Linux machine with Make and GHDL installed.
+    \item To simulate the shifter testbench,
+        \begin{enumerate}
+            \item Create a directory \tt{simulation/} (if it doesn't already exist).
+            \item In the commandline, run \tt{make shifter}.
+            \item A \tt{shifter_tb.ghw} waveform file will be created in the \tt{simulation/} directory. Note that the earlier file will be overwritten.
+        \end{enumerate}
+    \item To run the ARM programs.
+        \begin{enumerate}
+            \item Create a directory \tt{simulation/arm-tests/} (if it doesn't already exist).
+            \item In the commandline, run \tt{make testarm INPUT=}$X$ where $X \in \{$\tt{neg-fib}, \tt{test-dp-rot}$\}$.
+            \item A $X$\tt{.ghw} waveform file will be created in the \tt{simulation/arm-tests} directory. Note that the earlier file will be overwritten.
+        \end{enumerate}
+    \item Finally run \tt{make clean} to delete any temporary files created.
+\end{enumerate}
+
+\section{Testbench Descriptions}
+
+\subsection{\texttt{shifter\_tb}}
+This is an automated testbench, it's written in VHDL 2008 to make use of the VHDL \tt{ror}, \tt{srl}, \tt{srl}, \tt{sll} operations.
+
+For 4 input numbers, \tt{0x0000_0001}, \tt{0xFFFF_FFFE}, \tt{0x7FA0_C654}, and \tt{0xA649_5839} it performs the 4 possible rotate/shift operations, along with all 32 possible shift amounts, and uses \tt{assert} statements to check that the expected output matches the final output.
+
+\section{ARM Program Descriptions}
+The description of the three programs follow,
+
+\subsection{\texttt{neg-fib}}
+This computes the negative Fibonacci numbers, $F_{-i}$. If $a_i = F_{-i}$, then
+\[F_{i + 2} = F_{i + 1} + F_{i} \implies F_i = F_{i + 2} - F_{i + 1} \implies a_i = F_{-i} = F_{-i + 2} - F_{-i + 1} = a_{i - 2} - a_{i - 1}.\]
+$F_{-i}$ is stored in memory location, $64 + i$, for $0 \le i \le 8$.
+
+\addprogramcode{neg-fib}
+\clearpage
+
+\subsection{\texttt{test-dp-rot}}
+The program does some arbitrary manipulations involving rotate and shift operations, the result can be compared to the ARMSim output to see that they are the same.
+
+\addprogramcode{test-dp-rot}
+
+\section{Results}
+All the testbenches gave the expected results.
+
+The output waveform of the testbench results can be viewed in .ghw and .pdf files in the output folder. The pdf files of the simulation are also attached at the end of this report.
+
+Along with this, the pdf file of the shifter netlist and the states has been added to the end. The processor netlist hasn't been added due to it's large size.
+
+\addwaveformpdf{waveforms/shifter_tb}
+\addwaveformpdf{arm-tests/neg-fib}
+\addwaveformpdf{arm-tests/test-dp-rot}
+\addwaveformpdf{synthesis/processor_control_state}
+\addwaveformpdf[false]{synthesis/shifter_netlist}
+\end{document}

@@ -6,9 +6,9 @@ use IEEE.STD_LOGIC_1164.all;
 package MyTypes is
     subtype word     is std_logic_vector(31 downto 0);
     subtype hword    is std_logic_vector(15 downto 0);
-    subtype byte     is std_logic_vector(7 downto 0);
-    subtype nibble   is std_logic_vector(3 downto 0);
-    subtype bit_pair is std_logic_vector(1 downto 0);
+    subtype byte     is std_logic_vector( 7 downto 0);
+    subtype nibble   is std_logic_vector( 3 downto 0);
+    subtype bit_pair is std_logic_vector( 1 downto 0);
 
     type optype              is (andop, eor, sub, rsb, add, adc, sbc, rsc, tst, teq,
                                  cmp, cmn, orr, mov, bic, mvn);
@@ -29,11 +29,11 @@ package MyTypes is
                                 DT_reg_offset_alu_state);
     type shift_type         is (lsl, lsr, asr, opror);
 
-    -- attribute enum_encoding : string;
-    -- attribute enum_encoding of condtype           : type is "sequential";
-    -- attribute enum_encoding of optype             : type is "sequential";
-    -- attribute enum_encoding of control_state_type : type is "sequential";
-    -- attribute enum_encoding of shift_type         : type is "sequential";
+    attribute enum_encoding : string;
+    attribute enum_encoding of condtype           : type is "sequential";
+    attribute enum_encoding of optype             : type is "sequential";
+    attribute enum_encoding of control_state_type : type is "sequential";
+    attribute enum_encoding of shift_type         : type is "sequential";
 end MyTypes;
 
 package body MyTypes is

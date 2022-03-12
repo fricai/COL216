@@ -67,3 +67,5 @@ clean:
 	@echo "Cleaning temporary files..."
 	@ghdl --clean
 	@ghdl --remove
+	@ghdl --clean --std=08
+	@ghdl --remove --std=08
