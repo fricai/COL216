@@ -188,10 +188,6 @@ begin
                 operand2    <= (others => '0');
                 alu_cin     <= '1';
             when read_AB => null;
-                -- why did I ever have this?
-                -- if (instr_class = DT) then
-                --    reg_read_addr2 <= Rd;
-                -- end if;
             when arith =>
                 F_en <= '1';
                 -- We instead store the rotated immediate value in X
@@ -234,8 +230,7 @@ begin
                     when plus  => alu_op <= add;
                     when minus => alu_op <= sub;
                 end case;
-            when DP_constant_shift => null;
-            when DT_reg_offset_shift_state => null;
+            when imm_shift_state => null;
             when DT_reg_offset_alu_state   =>
                 reg_read_addr2 <= Rd;
                 operand2       <= D;
@@ -298,21 +293,20 @@ begin
                             case DP_operand_src is
                                 when reg =>
                                     case IR(4) is -- constant shift or not
-                                        when '0'    => control_state <= DP_constant_shift;
+                                        when '0'    => control_state <= imm_shift_state;
                                         when others => control_state <= DP_variable_shift_read;
                                     end case;
                                 when imm => control_state <= DP_imm_shift;
                             end case;
-                        when DT  =>
+                        when DT =>
                             case DT_reg_offset is
-                                when '1'    => control_state <= DT_reg_offset_shift_state;
+                                when '1'    => control_state <= imm_shift_state;
                                 -- offset comes from reg
                                 when others => control_state <= DT_imm_offset_state;
                                 -- offset is immediate
                             -- control_state <= load_resB;
                             end case;
-                        when BRN => control_state <= branch_shift;
-                        when others => null;
+                        when others => control_state <= branch_shift; -- BRN
                     end case;
                 when arith =>
                     Res           <= alu_out;
@@ -348,12 +342,12 @@ begin
                 when DP_imm_shift =>
                     D             <= shifter_output;
                     control_state <= arith;
-                when DP_constant_shift =>
+                when imm_shift_state =>
                     D             <= shifter_output;
-                    control_state <= arith;
-                when DT_reg_offset_shift_state =>
-                    D             <= shifter_output;
-                    control_state <= DT_reg_offset_alu_state;
+                    case instr_class is
+                        when DT     => control_state <= DT_reg_offset_alu_state;
+                        when others => control_state <= arith; -- DP
+                    end case;
                 when DT_reg_offset_alu_state =>
                     B   <= reg_out2;
                     Res <= alu_out;
