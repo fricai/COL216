@@ -21,6 +21,7 @@ begin
                                         amount => amount,
                                         oper   => oper,
                                         output => output,
+                                        cin    => '0',
                                         cout   => cout
                                     );
 
