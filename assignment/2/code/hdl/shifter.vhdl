@@ -60,11 +60,12 @@ use work.MyTypes.all;
 
 entity shifter is
     port(
-            input : in word;
-            amount: in std_logic_vector((log_word_size - 1) downto 0);
-            oper  : in shift_type;
-            output: out word;
-            cout  : out std_logic);
+            input  : in word;
+            amount : in std_logic_vector((log_word_size - 1) downto 0);
+            oper   : in shift_type;
+            cin    : in std_logic;
+            output : out word;
+            cout   : out std_logic);
 end shifter;
 
 architecture rtl of shifter is
@@ -77,7 +78,7 @@ architecture rtl of shifter is
     signal inter_c: inter_c_t;
 begin
     left_shift <= '1' when oper = lsl else '0';
-    inter_c(0) <= '0';
+    inter_c(0) <= cin;
 
     -- reverse
     rev: entity work.reverser
