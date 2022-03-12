@@ -18,13 +18,12 @@ entity decoder is
 		     cond           : out condtype;
 		     S_bit          : out std_logic;
 		     branch_offset  : out std_logic_vector(23 downto 0);
-		     Rm, Rd, Rn     : out std_logic_vector( 3 downto 0);
+		     Rm, Rd, Rn, Rs : out std_logic_vector( 3 downto 0);
 		     imm8           : out std_logic_vector( 7 downto 0);
              imm12          : out std_logic_vector(11 downto 0);
              rottype        : out shift_type;
              shift5         : out std_logic_vector(4 downto 0);
              shift4         : out std_logic_vector(3 downto 0);
-             shift_reg      : out std_logic_vector(3 downto 0);
              DT_reg_offset  : out std_logic);
 end decoder;
 
@@ -64,9 +63,10 @@ begin
 
 	branch_offset <= instruction(23 downto 0);
 
-	Rm <= instruction( 3 downto 0);
+	Rm <= instruction( 3 downto  0);
 	Rd <= instruction(15 downto 12);
 	Rn <= instruction(19 downto 16);
+    Rs <= instruction(11 downto  8);
 
 	imm8  <= instruction( 7 downto 0);
 	imm12 <= instruction(11 downto 0);
@@ -74,7 +74,6 @@ begin
 	rottype   <= rotarray(to_integer(unsigned(instruction(6 downto 5))));
     shift5    <= instruction(11 downto 7);
     shift4    <= instruction(11 downto 8);
-    shift_reg <= instruction(11 downto 8);
 
     DT_reg_offset <= instruction(25);
 end behavioral;

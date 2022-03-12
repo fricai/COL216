@@ -29,10 +29,11 @@ package MyTypes is
                                 DT_reg_offset_shift_state, DT_reg_offset_alu_state);
     type shift_type         is (lsl, lsr, asr, opror);
 
-    -- attribute enum_encoding: string;
-    -- attribute enum_encoding of condtype: type is "sequential";
-    -- attribute enum_encoding of optype: type is "sequential";
-    -- attribute enum_encoding of control_state_type: type is "sequential";
+    attribute enum_encoding : string;
+    attribute enum_encoding of condtype           : type is "sequential";
+    attribute enum_encoding of optype             : type is "sequential";
+    attribute enum_encoding of control_state_type : type is "sequential";
+    attribute enum_encoding of shift_type         : type is "sequential";
 end MyTypes;
 
 package body MyTypes is

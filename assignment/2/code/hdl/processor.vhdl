@@ -26,13 +26,12 @@ architecture rtl of processor is
     signal DT_offset_sign : DT_offset_sign_type;
     signal cond_field     : condtype;
     signal branch_offset  : std_logic_vector(23 downto 0);
-    signal Rd, Rn, Rm     : std_logic_vector(3 downto 0);
+    signal Rd, Rn, Rm, Rs : std_logic_vector(3 downto 0);
     signal S_bit          : std_logic;
     signal imm8           : std_logic_vector(7 downto 0);
     signal imm12          : std_logic_vector(11 downto 0);
     signal shift5         : std_logic_vector(4 downto 0);
     signal shift4         : std_logic_vector(3 downto 0);
-    signal shift_reg      : std_logic_vector(3 downto 0);
     signal rottype        : shift_type;
     signal DT_reg_offset  : std_logic;
 
@@ -136,6 +135,8 @@ begin
                                         input  => shifter_input,
                                         amount => shift_amount,
                                         oper   => shift_op,
+                                        cin    => C_flag,
+
                                         -- output
                                         output => shifter_output,
                                         cout   => shifter_cout
@@ -144,8 +145,9 @@ begin
     pc_reset <= '0' when reset = '0' else '1';
     pc_in <= alu_out(29 downto 0) & "00";
 
-    process(control_state, operation, A, B, D, X, shifter_output, C_flag, Rn, Rm, Rd, DR, pc_out,
-        instr_class, DP_operand_src, imm8, Res, imm12, DT_offset_sign, cond_true, branch_offset)
+    process(control_state, operation, A, B, D, X, shifter_output, C_flag, Rn, Rm, Rd, Rs, DR, pc_out,
+        instr_class, DP_operand_src, imm8, Res, imm12, DT_offset_sign, cond_true, branch_offset,
+        shift5, rottype, DP_subclass, shift4)
     begin
         -- default values
 
@@ -217,9 +219,8 @@ begin
                 operand1    <= "00" & pc_out((word_size - 1) downto 2);
                 operand2    <= word(resize(signed(branch_offset), word_size));
                 alu_cin     <= '1';
-            when DP_constant_shift => null;
             when DP_variable_shift_read =>
-                reg_read_addr1 <= shift_reg;
+                reg_read_addr1 <= Rs;
             when DP_variable_shift_shift =>
                 shift_amount <= X((log_word_size - 1) downto 0);
             when DP_imm_shift =>
@@ -233,6 +234,7 @@ begin
                     when plus  => alu_op <= add;
                     when minus => alu_op <= sub;
                 end case;
+            when DP_constant_shift => null;
             when DT_reg_offset_shift_state => null;
             when DT_reg_offset_alu_state   =>
                 reg_read_addr2 <= Rd;
@@ -258,12 +260,11 @@ begin
                          cond           => cond_field,
                          S_bit          => S_bit,
                          branch_offset  => branch_offset,
-                         Rm => Rm, Rd => Rd, Rn => Rn,
+                         Rm => Rm, Rd => Rd, Rn => Rn, Rs => Rs,
                          imm8 => imm8, imm12 => imm12,
                          rottype        => rottype,
                          shift5         => shift5,
                          shift4         => shift4,
-                         shift_reg      => shift_reg,
                          DT_reg_offset  => DT_reg_offset
                      );
 
@@ -338,9 +339,6 @@ begin
                     control_state <= fetch;
                 when branch_shift =>
                     control_state <= fetch;
-                when DP_constant_shift =>
-                    D             <= shifter_output;
-                    control_state <= arith;
                 when DP_variable_shift_read =>
                     X             <= reg_out1;
                     control_state <= DP_variable_shift_shift;
@@ -348,6 +346,9 @@ begin
                     D             <= shifter_output;
                     control_state <= arith;
                 when DP_imm_shift =>
+                    D             <= shifter_output;
+                    control_state <= arith;
+                when DP_constant_shift =>
                     D             <= shifter_output;
                     control_state <= arith;
                 when DT_reg_offset_shift_state =>
