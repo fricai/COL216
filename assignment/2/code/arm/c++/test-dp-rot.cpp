@@ -5,7 +5,7 @@
 int main() {
     uint32_t r0, r1, r2, r3, r4, r5;
 
-    auto print = [&](auto x) {
+    auto print = [](auto x) {
         std::cout << "0x" << std::setfill('0') << std::setw(8) << std::hex << x;
     };
     auto output = [&]() {
@@ -20,7 +20,7 @@ int main() {
         print(r4);
         std::cout << ' ';
         print(r5);
-        std::cout << '\n';
+        std::55ut << '\n';
     };
 
     r0 = 0xAC000003u;                      // mov r0, #0xAC000003

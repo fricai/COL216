@@ -31,7 +31,7 @@ analyze_tb:
 
 simulate:
 	@echo "Processor simulation started"
-	@ghdl -r processor_tb --stop-time=120ns --ieee-asserts=disable --wave=simulation/processor.ghw
+	@ghdl -r processor_tb --stop-time=120ns --ieee-asserts=disable --wave=simulation/processor_tb.ghw
 	@echo "Simulation over\n"
 
 testarm:
